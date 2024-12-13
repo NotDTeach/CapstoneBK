@@ -4,6 +4,6 @@ Cara Run Project :
 1. Buat database sesuai dengan nama yang sudah ada "poli"
 2. Kemudian buka aplikasi lewat (http://localhost/)
 3. Untuk proses Login admin adalah </br>
-   username : admin
+   username : admin </br>
    password : admin
    
