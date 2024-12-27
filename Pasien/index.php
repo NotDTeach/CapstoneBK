@@ -7,6 +7,7 @@ if (isset($_GET['id_pasien'])) {
 }
 
 include_once("../koneksi.php");
+
 ?>
 
 <!DOCTYPE html>

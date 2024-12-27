@@ -180,18 +180,19 @@ if (isset($_GET['id_pasien'])) {
                 </thead>
                 <tbody>
                     <?php
-                    if ($result_riwayat) {
+                    if ($result_riwayat && $result_riwayat->num_rows > 0) {
                         while ($row_riwayat = $result_riwayat->fetch_assoc()) {
                             echo "<tr>";
                             echo "<td>" . $row_riwayat['tgl_periksa'] . "</td>";
                             echo "<td>" . $row_riwayat['catatan'] . "</td>";
-                            echo "<td>Rp " . $row_riwayat['biaya_periksa'] . "</td>";
+                            echo "<td>Rp " . number_format($row_riwayat['biaya_periksa'], 0, ',', '.') . "</td>";
                             echo "<td>" . $row_riwayat['status_periksa'] . "</td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "Error: " . $mysqli->error;
+                        echo "<tr><td colspan='4'>Riwayat pemeriksaan tidak ditemukan.</td></tr>";
                     }
+                    
                     ?>
                 </tbody>
             </table>

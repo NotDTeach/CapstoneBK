@@ -106,6 +106,7 @@ if ($mysqli->connect_error) {
                         $check_query = "SELECT * FROM pasien WHERE no_ktp = '$no_ktp'";
                         $result = $mysqli->query($check_query);
 
+                
                         if ($result->num_rows > 0) {
                             echo "Nomor KTP sudah terdaftar. Mohon gunakan nomor KTP yang lain.";
                         } else {
@@ -149,8 +150,3 @@ if ($mysqli->connect_error) {
 </body>
 
 </html>
-
-
-
-
- 

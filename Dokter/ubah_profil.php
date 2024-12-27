@@ -189,9 +189,6 @@ $conn->close();
                         <li class="nav-item">
                             <a class="nav-link" href="index.php?page=loginDokter">Login</a>
                         </li>
-                        <!-- <li class="nav-item">
-                            <a class="nav-link" href="index.php?page=registerDokter">Registrasi Pasien</a>
-                        </li> -->
                     </ul>
                     <?php
                 }
@@ -223,9 +220,10 @@ $conn->close();
                                     value="<?php echo $row['nama_dokter']; ?>">
                             </div>
                             <div class="mb-3">
-                                <label for="id_poli" class="form-label">ID Poli</label>
+                                <label for="nip" class="form-label">ID Poli</label>
                                 <input type="text" class="form-control" id="id_poli" name="id_poli"
-                                    value="<?php echo $row['id_poli']; ?>">
+                                    value="<?php echo $row['id_poli']; ?>" disabled>
+                                <input type="hidden" name="id_poli" value="<?php echo $row['id_poli']; ?>">
                             </div>
                             <div class="mb-3">
                                 <label for="alamat" class="form-label">Alamat</label>
