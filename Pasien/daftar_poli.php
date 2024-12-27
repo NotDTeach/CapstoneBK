@@ -7,12 +7,8 @@ if (!isset($_SESSION['nama_pasien'])) {
     exit;
 }
 
-if (isset($_GET['id_pasien'])) {
-    $_SESSION['id_pasien'] = $_GET['id_pasien'];
-}
-if (isset($_GET['nama_dokter'])) {
-    $_SESSION['nama_dokter'] = $_GET['nama_dokter'];
-}
+// Menyimpan poli yang dipilih
+$poli_terpilih = isset($_GET['poli']) ? $_GET['poli'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +20,6 @@ if (isset($_GET['nama_dokter'])) {
     <title>Daftar Poli Poliklinik</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-
         .mycare-sidebar {
             height: 100vh;
             position: fixed;
@@ -32,7 +27,7 @@ if (isset($_GET['nama_dokter'])) {
             left: 0;
             width: 250px;
             padding-top: 15px;
-            background-color: #4267b2; 
+            background-color: #0171f9;
             color: #fff;
             transition: all 0.3s;
             z-index: 1;
@@ -51,19 +46,19 @@ if (isset($_GET['nama_dokter'])) {
 
         .mycare-sidebar a:hover {
             padding-left: 20px;
-            background-color: #3a5795;
+            background-color: #0c8ff7;
         }
 
         .mycare-sidebar .navbar-brand {
             font-size: 1.8rem;
             color: #fff;
             font-weight: bold;
-            margin-bottom: 20px; 
+            margin-bottom: 20px;
         }
 
         .mycare-dropdown-content {
             display: none;
-            background-color: #3a5795; 
+            background-color: #3a5795;
             min-width: 160px;
             box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
             z-index: 1;
@@ -78,7 +73,7 @@ if (isset($_GET['nama_dokter'])) {
         }
 
         .mycare-dropdown-content a:hover {
-            background-color: #29487d; 
+            background-color: #3a5795;
         }
 
         .mycare-dropdown:hover .mycare-dropdown-content {
@@ -89,8 +84,6 @@ if (isset($_GET['nama_dokter'])) {
             margin-left: 250px;
             padding: 20px;
             transition: margin-left 0.3s;
-            width: calc(100% - 250px);
-            float: right;
         }
 
         @media (max-width: 768px) {
@@ -100,106 +93,115 @@ if (isset($_GET['nama_dokter'])) {
 
             .mycare-content {
                 margin-left: 0;
-                width: 100%;
             }
         }
     </style>
 </head>
 
 <body>
+    <!-- Sidebar/Navbar -->
     <div class="mycare-sidebar">
         <a class="navbar-brand" href="../index.php">My Care</a>
         <a href="index.php"><i class="fas fa-home"></i> Home</a>
-        
-        <?php
-        if (isset($_SESSION['nama_pasien'])) {
-        ?>
-            <div class="mycare-dropdown">
-                <a href="../index.php"><i class="fas fa-bars"></i> Menu</a>
-                <div class="mycare-dropdown-content">
-                    <a href="daftar_poli.php?page=dokter"><i class="fas fa-user-md"></i> Mendaftar ke Poli</a>
-                </div>
-            </div>
-        <?php
-        }
-        ?>
-        <?php
-        if (isset($_SESSION['nama_pasien'])) {
-            ?>
+        <?php if (isset($_SESSION['nama_pasien'])) { ?>
+            <a href="daftar_poli.php"><i class="fas fa-user-md"></i> Mendaftar ke Poli</a>
             <a href="Logout.php"><i class="fas fa-sign-out-alt"></i> Logout (<?php echo $_SESSION['nama_pasien'] ?>)</a>
-        <?php
-        } else {
-            ?>
+        <?php } else { ?>
             <a href="index.php?page=loginPasien"><i class="fas fa-sign-in-alt"></i> Login</a>
             <a href="index.php?page=registerPasien"><i class="fas fa-user-plus"></i> Registrasi Pasien</a>
-        <?php
-        }
-        ?>
+        <?php } ?>
     </div>
 
-
+    <!-- Content -->
     <div class="mycare-content">
         <div class="container mt-5">
             <h2>Daftar Poli Poliklinik</h2>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">No.</th>
-                    <th scope="col">Nama Dokter</th>
-                    <th scope="col">Hari</th>
-                    <th scope="col">Jam Mulai</th>
-                    <th scope="col">Jam Selesai</th>
-                    <th scope="col">Daftar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $mysqli = new mysqli("localhost", "root", "", "poli"); // Ganti dengan informasi koneksi database yang benar
-                
-                if ($mysqli->connect_error) {
-                    die("Koneksi database gagal: " . $mysqli->connect_error);
-                }
+            <!-- Dropdown untuk memilih Poli -->
+            <form method="GET" action="daftar_poli.php">
+                <div class="mb-3">
+                    <label for="poli" class="form-label">Pilih Poli:</label>
+                    <select class="form-select" id="poli" name="poli" onchange="this.form.submit()">
+                        <option value="">-- Pilih Poli --</option>
+                        <?php
+                        $mysqli = new mysqli("localhost", "root", "", "poli");
 
-                $query = "SELECT jp.*, d.nama_dokter
-                FROM jadwal_periksa jp
-                INNER JOIN dokter d ON jp.id_dokter = d.id"; 
+                        if ($mysqli->connect_error) {
+                            die("Koneksi database gagal: " . $mysqli->connect_error);
+                        }
 
-                $stmt = $mysqli->prepare($query);
-                $stmt->execute();
-                $result = $stmt->get_result();
+                        // Mengambil daftar poli dari database
+                        $query_poli = "SELECT * FROM poli";
+                        $result_poli = $mysqli->query($query_poli);
 
-                if ($result->num_rows > 0) {
-                    $count = 1;
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . $count . "</td>";
-                        echo "<td>" . htmlspecialchars($row['nama_dokter']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['hari']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['jam_mulai']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['jam_selesai']) . "</td>";
-                
-                        // Tautan Daftar dengan parameter id
-                        echo "<td><a href='proses_form_keluhan.php?id_jadwal=" . $row['id'] . "&id_pasien=" . (isset($_SESSION['id_pasien']) ? $_SESSION['id_pasien'] : '') . "' class='btn btn-primary'>Daftar</a></td>";
-                        echo "</tr>";
-                        $count++;
+                        while ($poli = $result_poli->fetch_assoc()) {
+                            $selected = ($poli_terpilih == $poli['nama_poli']) ? "selected" : "";
+                            echo "<option value='" . $poli['nama_poli'] . "' $selected>" . htmlspecialchars($poli['nama_poli']) . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            </form>
+
+            <!-- Tabel Jadwal Dokter -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Nama Dokter</th>
+                        <th scope="col">Hari</th>
+                        <th scope="col">Jam Mulai</th>
+                        <th scope="col">Jam Selesai</th>
+                        <th scope="col">Daftar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Jika poli dipilih, tampilkan jadwal dokter sesuai poli
+                    if ($poli_terpilih) {
+                        $query = "SELECT jp.*, d.nama_dokter
+                                  FROM jadwal_periksa jp
+                                  INNER JOIN dokter d ON jp.id_dokter = d.id
+                                  INNER JOIN poli p ON d.id_poli = p.id
+                                  WHERE p.nama_poli = ? AND jp.status = 'Aktif'";
+
+                        $stmt = $mysqli->prepare($query);
+                        $stmt->bind_param("s", $poli_terpilih);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        if ($result->num_rows > 0) {
+                            $count = 1;
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $count . "</td>";
+                                echo "<td>" . htmlspecialchars($row['nama_dokter']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['hari']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['jam_mulai']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['jam_selesai']) . "</td>";
+
+                                // Tombol Daftar
+                                echo "<td><a href='proses_form_keluhan.php?id_jadwal=" . $row['id'] . "&id_pasien=" . (isset($_SESSION['id_pasien']) ? $_SESSION['id_pasien'] : '') . "' class='btn btn-primary'>Daftar</a></td>";
+                                echo "</tr>";
+                                $count++;
+                            }
+                        } else {
+                            echo "<tr><td colspan='6'>Tidak ada jadwal untuk poli ini.</td></tr>";
+                        }
+                        $stmt->close();
+                    } else {
+                        echo "<tr><td colspan='6'>Silakan pilih poli terlebih dahulu.</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='6'>Tidak ada jadwal periksa</td></tr>";
-                }
 
-                $stmt->close();
-                $mysqli->close();
-                ?>
-            </tbody>
-        </table>
+                    $mysqli->close();
+                    ?>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

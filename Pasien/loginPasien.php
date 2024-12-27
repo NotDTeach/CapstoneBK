@@ -4,8 +4,9 @@ if (!isset($_SESSION)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $no_rm = $_POST['no_rm'];
-    $query = "SELECT * FROM pasien WHERE no_rm = '$no_rm'";
+    $nama_pasien = $_POST['nama_pasien'];
+    $no_ktp = $_POST['no_ktp'];
+    $query = "SELECT * FROM pasien WHERE no_ktp = '$no_ktp'";
     $result = $mysqli->query($query);
 
     if (!$result) {
@@ -13,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
-        if ($no_rm === $row['no_rm']) {
+        if ($no_ktp === $row['no_ktp']) {
             $_SESSION['nama_pasien'] = $row['nama_pasien'];
             $_SESSION['id_pasien'] = $row['id_pasien'];
             $_SESSION['id_pasien'] = $row['id'];
@@ -21,11 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: index.php");
             exit;
         } else {
-            $error = "Nomor Rekam Medis salah";
+            $error = "Nomor KTP anda salah";
         }
         
     } else {
-        $error = "Nomor Rekam Medis Tidak ditemukan";
+        $error = "Nomor KTP Tidak ditemukan";
     }
 }
 ?>
@@ -101,8 +102,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 ?>
                 <div class="form-group">
-                    <input type="text" name="no_rm" class="mycare-login-input" required
-                        placeholder="Nomor Rekam Medis">
+                    <input type="text" name="nama_pasien" class="mycare-login-input" required
+                        placeholder="Nama Pasien">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="no_ktp" class="mycare-login-input" required
+                        placeholder="Nomor KTP">
                 </div>
                 <button type="submit" class="mycare-login-button">Login</button>
             </form>

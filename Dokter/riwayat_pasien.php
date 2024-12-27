@@ -5,20 +5,30 @@ if (!isset($_SESSION)) {
 
 include_once("../koneksi.php");
 
+
 if (isset($_GET['id_pasien'])) {
     $id_pasien = $_GET['id_pasien'];
 
+    // Query untuk mengambil data pasien
     $query_pasien = "SELECT * FROM pasien WHERE id = '$id_pasien'";
     $result_pasien = $mysqli->query($query_pasien);
 
     if ($result_pasien) {
         $data_pasien = $result_pasien->fetch_assoc();
 
-        $query_riwayat = "SELECT * FROM periksa WHERE id = '$id_pasien'";
+        // Query untuk mengambil riwayat pemeriksaan berdasarkan id_pasien
+        $query_riwayat = "
+            SELECT p.*, dp.tgl_periksa, dp.status_periksa 
+            FROM periksa p
+            JOIN daftar_poli dp ON p.id_daftar_poli = dp.id
+            WHERE dp.id_pasien = '$id_pasien'
+            ORDER BY dp.tgl_periksa DESC";
+
         $result_riwayat = $mysqli->query($query_riwayat);
     } else {
         echo "Error: " . $mysqli->error;
     }
+
 }
 ?>
 
@@ -157,28 +167,27 @@ if (isset($_GET['id_pasien'])) {
                 ?>
             </div>
         </div>
-            <div class="mycare-content col-md-9">
-                <div class="container mt-4">
+        <div class="mycare-content col-md-9">
+        <div class="container mt-4">
         <h1>Riwayat Pemeriksaan</h1>
-        <?php
-        if (isset($data_pasien)) {
-        ?>
-            <h3>Informasi Pasien:</h3>
-            <p>ID Pasien: <?php echo $data_pasien['id_pasien']; ?></p>
-            <p>Nama Pasien: <?php echo $data_pasien['nama_pasien']; ?></p>
-            <p>Alamat: <?php echo $data_pasien['alamat']; ?></p>
+            <?php if (isset($data_pasien)) {
+                ?>
+                <h3>Informasi Pasien:</h3>
+                <p>ID Pasien: <?php echo $data_pasien['id']; ?></p>
+                <p>Nama Pasien: <?php echo $data_pasien['nama_pasien']; ?></p>
+                <p>Alamat: <?php echo $data_pasien['alamat']; ?></p>
 
-            <h3>Riwayat Periksa:</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Tanggal Periksa</th>
-                        <th>Catatan</th>
-                        <th>Biaya Periksa</th>
-                        <th>Status Periksa</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <h3>Riwayat Periksa:</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tanggal Periksa</th>
+                            <th>Catatan</th>
+                            <th>Biaya Periksa</th>
+                            <!-- <th>Status Periksa</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
                     <?php
                     if ($result_riwayat && $result_riwayat->num_rows > 0) {
                         while ($row_riwayat = $result_riwayat->fetch_assoc()) {
@@ -186,21 +195,19 @@ if (isset($_GET['id_pasien'])) {
                             echo "<td>" . $row_riwayat['tgl_periksa'] . "</td>";
                             echo "<td>" . $row_riwayat['catatan'] . "</td>";
                             echo "<td>Rp " . number_format($row_riwayat['biaya_periksa'], 0, ',', '.') . "</td>";
-                            echo "<td>" . $row_riwayat['status_periksa'] . "</td>";
+                            // echo "<td>" . $row_riwayat['status_periksa'] . "</td>";
                             echo "</tr>";
                         }
                     } else {
                         echo "<tr><td colspan='4'>Riwayat pemeriksaan tidak ditemukan.</td></tr>";
                     }
-                    
                     ?>
-                </tbody>
-            </table>
-            <?php
-        } else {
-            echo "Informasi pasien tidak ditemukan.";
-        }
-        ?>
+                    </tbody>
+
+                </table>
+            <?php } else {
+                echo "<p>Informasi pasien tidak ditemukan.</p>";
+            } ?>
     </div>
     </div>
     </div>

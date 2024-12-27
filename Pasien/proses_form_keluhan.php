@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_keluhan'])) {
             left: 0;
             width: 250px;
             padding-top: 15px;
-            background-color: #4267b2; /* Warna biru Facebook */
+            background-color: #0171f9;
             color: #fff;
             transition: all 0.3s;
             z-index: 1;
@@ -165,19 +165,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_keluhan'])) {
 
         .mycare-sidebar a:hover {
             padding-left: 20px;
-            background-color: #3a5795; /* Warna biru Facebook lebih gelap saat di-hover */
+            background-color: #0c8ff7;
         }
 
         .mycare-sidebar .navbar-brand {
             font-size: 1.8rem;
             color: #fff;
             font-weight: bold;
-            margin-bottom: 20px; /* Jarak antara brand dan link */
+            margin-bottom: 20px;
         }
 
         .mycare-dropdown-content {
             display: none;
-            background-color: #3a5795; /* Warna biru Facebook pada dropdown */
+            background-color: #3a5795;
             min-width: 160px;
             box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
             z-index: 1;
@@ -192,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_keluhan'])) {
         }
 
         .mycare-dropdown-content a:hover {
-            background-color: #29487d; /* Warna biru Facebook lebih gelap pada dropdown saat di-hover */
+            background-color: #3a5795;
         }
 
         .mycare-dropdown:hover .mycare-dropdown-content {
@@ -203,8 +203,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_keluhan'])) {
             margin-left: 250px;
             padding: 20px;
             transition: margin-left 0.3s;
-            width: calc(100% - 250px);
-            float: right;
         }
 
         @media (max-width: 768px) {
@@ -214,7 +212,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_keluhan'])) {
 
             .mycare-content {
                 margin-left: 0;
-                width: 100%;
             }
         }
     </style>
@@ -223,47 +220,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_keluhan'])) {
 <body>
     <div class="mycare-sidebar">
         <a class="navbar-brand" href="../index.php">My Care</a>
-        <a href="../index.php"><i class="fas fa-home"></i> Home</a>
+        <a href="index.php"><i class="fas fa-home"></i> Home</a>
+        
+        <?php
+        if (isset($_SESSION['nama_pasien'])) {
+        ?>
             <div class="mycare-dropdown">
-                <a href="#"><i class="fas fa-bars"></i> Menu</a>
+                <a href="../index.php"><i class="fas fa-bars"></i> Menu</a>
                 <div class="mycare-dropdown-content">
                     <a href="daftar_poli.php?page=dokter"><i class="fas fa-user-md"></i> Mendaftar ke Poli</a>
                 </div>
             </div>
-                    <?php
-                    if (isset($_SESSION['no_rm'])) {
-                        ?>
-                        <?php
-                    }
-                    ?>
-                </ul>
-                <?php
-                if (isset($_SESSION['nama_pasien'])) {
-                    ?>
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="Logout.php">Logout (
-                                <?php echo $_SESSION['nama_pasien'] ?>)
-                            </a>
-                        </li>
-                    </ul>
-                    <?php
-                } else {
-                    ?>
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.php?page=loginPasien">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.php?page=registerPasien">Registrasi Pasien</a>
-                        </li>
-                    </ul>
-                    <?php
-                }
-                ?>
-            </div>
-        </div>
-    </nav>
+        <?php
+        }
+        ?>
+        <?php
+        if (isset($_SESSION['nama_pasien'])) {
+            ?>
+            <a href="Logout.php"><i class="fas fa-sign-out-alt"></i> Logout (<?php echo $_SESSION['nama_pasien'] ?>)</a>
+        <?php
+        } else {
+            ?>
+            <a href="index.php?page=loginPasien"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="index.php?page=registerPasien"><i class="fas fa-user-plus"></i> Registrasi Pasien</a>
+        <?php
+        }
+        ?>
+    </div>
 
     <div class="mycare-content">
         <div class="container mt-5">
